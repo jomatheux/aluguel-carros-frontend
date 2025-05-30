@@ -4,28 +4,36 @@ import { toast } from 'react-hot-toast';
 import { AlertCircle } from 'lucide-react';
 import Loading from '../ui/Loading'; // Assuming this path is correct
 
+// Define CarroStatus enum (ideally, this comes from your types.ts)
+export enum CarroStatus {
+  DISPONIVEL = 'DISPONIVEL',
+  LOCADO = 'LOCADO',
+  MANUTENCAO = 'MANUTENCAO',
+}
+
+// Assuming CreateCarData is updated in types.ts:
+// export interface CreateCarData {
+//   modelo: string;
+//   marca: string;
+//   ano: number;
+//   placa: string;
+//   precoPorDia: string;
+//   imagem: string;
+//   status: CarroStatus; // Added status
+// }
+// And Car might be:
+// export interface Car extends CreateCarData {
+//   id: string;
+//   status: CarroStatus; // Added status
+// }
+
+
 interface CarFormProps {
   car?: Car; // Car object for editing, optional
   onSubmit: (data: CreateCarData) => Promise<void>; // Submission handler
   onCancel: () => void; // Cancellation handler
   isSubmitting: boolean; // Flag to indicate submission process
 }
-
-// Assuming CreateCarData is defined like this in types.ts to match "number string"
-// export interface CreateCarData {
-//   modelo: string;
-//   marca: string;
-//   ano: number;
-//   placa: string;
-//   precoPorDia: string; // Key change: must be a string for "number string"
-//   imagem: string;
-// }
-// And Car might be:
-// export interface Car extends CreateCarData {
-//   id: string;
-//   // precoPorDia might come as number or string from API, hence String() conversion
-// }
-
 
 const CarForm: React.FC<CarFormProps> = ({ 
   car, 
@@ -36,26 +44,38 @@ const CarForm: React.FC<CarFormProps> = ({
   const [formData, setFormData] = useState<CreateCarData>({
     modelo: '',
     marca: '',
-    ano: new Date().getFullYear(), // Stays as number in state
+    ano: new Date().getFullYear(),
     placa: '',
-    precoPorDia: '', // Initialized as string, will remain string
+    precoPorDia: '',
     imagem: '',
+    status: CarroStatus.DISPONIVEL, // Initialize status
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    // If a car object is provided (editing mode), populate the form
     if (car) {
       setFormData({
         modelo: car.modelo,
         marca: car.marca,
-        ano: car.ano, // ano is a number
+        ano: car.ano,
         placa: car.placa,
-        precoPorDia: String(car.precoPorDia ?? ''), // Ensure precoPorDia is a string
+        precoPorDia: String(car.precoPorDia ?? ''),
         imagem: car.imagem,
+        status: car.status || CarroStatus.DISPONIVEL, // Populate status
+      });
+    } else {
+      // Reset to default for new car form
+      setFormData({
+        modelo: '',
+        marca: '',
+        ano: new Date().getFullYear(),
+        placa: '',
+        precoPorDia: '',
+        imagem: '',
+        status: CarroStatus.DISPONIVEL,
       });
     }
-  }, [car]); // Rerun effect if car prop changes
+  }, [car]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -63,18 +83,20 @@ const CarForm: React.FC<CarFormProps> = ({
     const { name, value } = e.target;
     
     if (name === 'ano') {
-      // 'ano' should be stored as a number
       setFormData((prev) => ({
         ...prev,
-        [name]: parseInt(value, 10) || 0, // Default to 0 or handle NaN appropriately
+        [name]: parseInt(value, 10) || 0, 
       }));
-    } else {
-      // For 'precoPorDia' and other text-based inputs, store the value as a string.
-      // The input type="number" for precoPorDia will provide 'value' as a string.
+    } else if (name === 'status') {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value as CarroStatus, // Cast value to CarroStatus
+      }));
+    }
+     else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
     
-    // Clear the error for the field being edited
     if (errors[name]) {
       setErrors((prev) => {
         const newErrors = { ...prev };
@@ -87,18 +109,15 @@ const CarForm: React.FC<CarFormProps> = ({
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
     
-    // Validate 'modelo'
     if (!formData.modelo.trim()) {
       newErrors.modelo = 'Modelo is required';
     }
     
-    // Validate 'marca'
     if (!formData.marca.trim()) {
       newErrors.marca = 'Marca is required';
     }
     
-    // Validate 'ano'
-    if (!formData.ano) { // Checks for 0 or NaN if parseInt failed to a falsy value
+    if (!formData.ano) { 
       newErrors.ano = 'Ano is required';
     } else if (isNaN(formData.ano)) {
       newErrors.ano = 'Ano must be a valid number';
@@ -106,14 +125,12 @@ const CarForm: React.FC<CarFormProps> = ({
       newErrors.ano = 'Ano must be a valid year';
     }
     
-    // Validate 'placa'
     if (!formData.placa.trim()) {
       newErrors.placa = 'Placa is required';
-    } else if (formData.placa.length < 5) { // Example validation, adjust as needed
+    } else if (formData.placa.length < 5) { 
       newErrors.placa = 'Placa must be valid (e.g., at least 5 characters)';
     }
     
-    // Validate 'precoPorDia'
     if (!formData.precoPorDia.trim()) {
       newErrors.precoPorDia = 'Price per day is required';
     } else {
@@ -125,18 +142,21 @@ const CarForm: React.FC<CarFormProps> = ({
       }
     }
     
-    // Validate 'imagem' (Image URL)
     if (!formData.imagem.trim()) {
-      newErrors.imagem = 'Image URL is required'; // Corrected error key
+      newErrors.imagem = 'Image URL is required';
     } else if (!isValidUrl(formData.imagem)) {
-      newErrors.imagem = 'Please enter a valid URL'; // Corrected error key
+      newErrors.imagem = 'Please enter a valid URL';
+    }
+
+    // Validate 'status'
+    if (!formData.status || !Object.values(CarroStatus).includes(formData.status as CarroStatus)) {
+      newErrors.status = 'Status is required and must be a valid option.';
     }
     
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0; // Return true if no errors
+    return Object.keys(newErrors).length === 0;
   };
 
-  // Helper function to validate URL format
   const isValidUrl = (url: string): boolean => {
     try {
       new URL(url);
@@ -147,30 +167,25 @@ const CarForm: React.FC<CarFormProps> = ({
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault(); 
     
-    if (!validate()) return; // If validation fails, do not submit
+    if (!validate()) return; 
     
     try {
-      // formData.precoPorDia is now a string, matching "number string" requirement
       await onSubmit(formData); 
     } catch (error) {
-      // Handle submission error (e.g., display a toast notification)
       toast.error('Failed to save car. Please check the details and try again.');
       console.error("Submission error:", error);
     }
   };
 
-  // CSS classes like 'form-label', 'form-input', 'form-error', 'btn-primary', 'btn-outline'
-  // are assumed to be defined globally or via a CSS framework like Tailwind CSS.
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-lg shadow-md">
-      <h3 className="text-xl font-semibold mb-4 text-neutral-700">
+    <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow-xl">
+      <h3 className="text-2xl font-semibold mb-6 text-neutral-800 border-b pb-3">
         {car ? 'Edit Car' : 'Add New Car'}
       </h3>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
         {/* Marca field */}
         <div>
           <label htmlFor="marca" className="block text-sm font-medium text-neutral-700 mb-1">
@@ -182,8 +197,8 @@ const CarForm: React.FC<CarFormProps> = ({
             type="text"
             value={formData.marca}
             onChange={handleChange}
-            className={`w-full px-3 py-2 border rounded-md shadow-sm placeholder-neutral-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${errors.marca ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-neutral-300'}`}
-            placeholder="Toyota"
+            className={`w-full px-4 py-2 border rounded-md shadow-sm placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${errors.marca ? 'border-red-500 focus:ring-red-500' : 'border-neutral-300'}`}
+            placeholder="Ex: Toyota"
           />
           {errors.marca && (
             <div className="text-red-600 text-xs mt-1 flex items-center">
@@ -204,8 +219,8 @@ const CarForm: React.FC<CarFormProps> = ({
             type="text"
             value={formData.modelo}
             onChange={handleChange}
-            className={`w-full px-3 py-2 border rounded-md shadow-sm placeholder-neutral-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${errors.modelo ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-neutral-300'}`}
-            placeholder="Corolla"
+            className={`w-full px-4 py-2 border rounded-md shadow-sm placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${errors.modelo ? 'border-red-500 focus:ring-red-500' : 'border-neutral-300'}`}
+            placeholder="Ex: Corolla"
           />
           {errors.modelo && (
             <div className="text-red-600 text-xs mt-1 flex items-center">
@@ -223,11 +238,11 @@ const CarForm: React.FC<CarFormProps> = ({
           <input
             id="ano"
             name="ano"
-            type="number" // HTML5 input type for better UX
-            value={formData.ano} // Stored as number
+            type="number"
+            value={formData.ano}
             onChange={handleChange}
-            className={`w-full px-3 py-2 border rounded-md shadow-sm placeholder-neutral-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${errors.ano ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-neutral-300'}`}
-            placeholder="2023"
+            className={`w-full px-4 py-2 border rounded-md shadow-sm placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${errors.ano ? 'border-red-500 focus:ring-red-500' : 'border-neutral-300'}`}
+            placeholder="Ex: 2023"
             min="1900"
             max={new Date().getFullYear() + 1}
           />
@@ -250,8 +265,8 @@ const CarForm: React.FC<CarFormProps> = ({
             type="text"
             value={formData.placa}
             onChange={handleChange}
-            className={`w-full px-3 py-2 border rounded-md shadow-sm placeholder-neutral-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${errors.placa ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-neutral-300'}`}
-            placeholder="ABC1D23"
+            className={`w-full px-4 py-2 border rounded-md shadow-sm placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${errors.placa ? 'border-red-500 focus:ring-red-500' : 'border-neutral-300'}`}
+            placeholder="Ex: ABC1D23"
           />
           {errors.placa && (
             <div className="text-red-600 text-xs mt-1 flex items-center">
@@ -262,21 +277,20 @@ const CarForm: React.FC<CarFormProps> = ({
         </div>
 
         {/* PrecoPorDia field */}
-        <div className="md:col-span-2"> {/* Make price and image full width on medium screens if desired */}
+        <div>
           <label htmlFor="precoPorDia" className="block text-sm font-medium text-neutral-700 mb-1">
-            Price per Day (e.g., 50.99)
+            Preço por Dia (R$)
           </label>
           <input
             id="precoPorDia"
             name="precoPorDia"
-            type="number" // HTML5 input type for better UX (e.g. numeric keyboard on mobile)
-                         // e.target.value will still be a string
-            value={formData.precoPorDia} // Stored as string
+            type="number"
+            value={formData.precoPorDia}
             onChange={handleChange}
-            className={`w-full px-3 py-2 border rounded-md shadow-sm placeholder-neutral-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${errors.precoPorDia ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-neutral-300'}`}
-            placeholder="50.00"
-            min="0.01" // Minimum value for the input
-            step="0.01" // Step for number input
+            className={`w-full px-4 py-2 border rounded-md shadow-sm placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${errors.precoPorDia ? 'border-red-500 focus:ring-red-500' : 'border-neutral-300'}`}
+            placeholder="Ex: 50.00"
+            min="0.01"
+            step="0.01"
           />
           {errors.precoPorDia && (
             <div className="text-red-600 text-xs mt-1 flex items-center">
@@ -285,12 +299,38 @@ const CarForm: React.FC<CarFormProps> = ({
             </div>
           )}
         </div>
+
+        {/* Status field */}
+        <div>
+          <label htmlFor="status" className="block text-sm font-medium text-neutral-700 mb-1">
+            Status
+          </label>
+          <select
+            id="status"
+            name="status"
+            value={formData.status}
+            onChange={handleChange}
+            className={`w-full px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${errors.status ? 'border-red-500 focus:ring-red-500' : 'border-neutral-300'}`}
+          >
+            {Object.values(CarroStatus).map((statusValue) => (
+              <option key={statusValue} value={statusValue}>
+                {statusValue.charAt(0) + statusValue.slice(1).toLowerCase()} 
+              </option>
+            ))}
+          </select>
+          {errors.status && (
+            <div className="text-red-600 text-xs mt-1 flex items-center">
+              <AlertCircle className="h-4 w-4 mr-1" />
+              {errors.status}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Image URL field */}
-      <div>
+      <div className="pt-2"> {/* Added some top padding */}
         <label htmlFor="imagem" className="block text-sm font-medium text-neutral-700 mb-1">
-          Image URL
+          URL da Imagem
         </label>
         <input
           id="imagem"
@@ -298,8 +338,8 @@ const CarForm: React.FC<CarFormProps> = ({
           type="text"
           value={formData.imagem}
           onChange={handleChange}
-          className={`w-full px-3 py-2 border rounded-md shadow-sm placeholder-neutral-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${errors.imagem ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-neutral-300'}`}
-          placeholder="https://example.com/car-image.jpg"
+          className={`w-full px-4 py-2 border rounded-md shadow-sm placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${errors.imagem ? 'border-red-500 focus:ring-red-500' : 'border-neutral-300'}`}
+          placeholder="https://example.com/imagem-do-carro.jpg"
         />
         {errors.imagem && (
           <div className="text-red-600 text-xs mt-1 flex items-center">
@@ -311,45 +351,40 @@ const CarForm: React.FC<CarFormProps> = ({
 
       {/* Image preview */}
       {formData.imagem && isValidUrl(formData.imagem) && (
-        <div className="mt-2">
-          <p className="text-sm text-neutral-500 mb-1">Image Preview:</p>
+        <div className="mt-4">
+          <p className="text-sm text-neutral-600 mb-1">Preview da Imagem:</p>
           <img
             src={formData.imagem}
-            alt="Car preview"
-            className="w-full max-w-sm h-40 object-cover rounded-md border border-neutral-200"
+            alt="Pré-visualização do carro"
+            className="w-full max-w-md h-48 object-cover rounded-lg border border-neutral-300 shadow-sm"
             onError={(e) => {
-              (e.target as HTMLImageElement).src = 'https://placehold.co/400x200/E2E8F0/94A3B8?text=Invalid+Or+Missing+Image';
-              // Optionally, keep or set an error if the preview fails but URL was initially valid
-              // setErrors((prev) => ({
-              //   ...prev,
-              //   imagem: 'Image could not be loaded, please check the URL.',
-              // }));
+              (e.target as HTMLImageElement).src = 'https://placehold.co/600x300/E2E8F0/94A3B8?text=Imagem+Inv%C3%A1lida+ou+N%C3%A3o+Encontrada';
             }}
           />
         </div>
       )}
 
       {/* Form buttons */}
-      <div className="flex justify-end space-x-3 pt-4">
+      <div className="flex justify-end space-x-4 pt-6 border-t mt-6">
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 border border-neutral-300 rounded-md text-sm font-medium text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-500 disabled:opacity-50"
+          className="px-6 py-2 border border-neutral-400 rounded-md text-sm font-medium text-neutral-700 hover:bg-neutral-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-500 disabled:opacity-60 transition-colors"
           disabled={isSubmitting}
         >
-          Cancel
+          Cancelar
         </button>
         <button
           type="submit"
-          className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 flex items-center justify-center"
+          className="px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-60 transition-colors flex items-center justify-center"
           disabled={isSubmitting}
         >
           {isSubmitting ? (
             <Loading size="small" color="white" />
           ) : car ? (
-            'Update Car'
+            'Atualizar Carro'
           ) : (
-            'Add Car'
+            'Adicionar Carro'
           )}
         </button>
       </div>

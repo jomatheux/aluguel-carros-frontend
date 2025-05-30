@@ -53,7 +53,7 @@ export const CarService = {
 
   async updateCar(id: string, data: Partial<CreateCarData>): Promise<ApiResponse<Car>> {
     try {
-      const response = await api.put<ApiResponse<Car>>(`/cars/${id}`, data);
+      const response = await api.put<ApiResponse<Car>>(`/carros/${id}`, data);
       return response.data;
     } catch (error: any) {
       return {
@@ -66,7 +66,7 @@ export const CarService = {
 
   async deleteCar(id: string): Promise<ApiResponse<void>> {
     try {
-      const response = await api.delete<ApiResponse<void>>(`/cars/${id}`);
+      const response = await api.delete<ApiResponse<void>>(`/carros/${id}`);
       return response.data;
     } catch (error: any) {
       return {
@@ -78,7 +78,7 @@ export const CarService = {
 
   async updateCarStatus(id: string, status: 'available' | 'unavailable'): Promise<ApiResponse<Car>> {
     try {
-      const response = await api.patch<ApiResponse<Car>>(`/cars/${id}/status`, { status });
+      const response = await api.patch<ApiResponse<Car>>(`/carros/${id}/status`, { status });
       return response.data;
     } catch (error: any) {
       return {

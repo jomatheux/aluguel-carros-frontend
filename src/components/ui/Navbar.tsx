@@ -8,6 +8,8 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const userDetails = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') as string) : null;
+
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -60,7 +62,7 @@ const Navbar: React.FC = () => {
                 
                 <div className="flex items-center space-x-3">
                   <span className="text-neutral-700">
-                    Hi, {localStorage.getItem('user.nome')}
+                    Hi, { userDetails?.nome }
                   </span>
                   <button 
                     onClick={handleLogout}

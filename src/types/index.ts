@@ -50,6 +50,7 @@ export interface CreateCarData {
   placa: string;
   precoPorDia: string;
   imagem: string;
+  status: 'DISPONIVEL' | 'LOCADO' | 'MANUTENCAO';
 }
 
 // Rental types

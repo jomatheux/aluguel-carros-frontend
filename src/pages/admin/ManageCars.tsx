@@ -44,9 +44,9 @@ const ManageCars: React.FC = () => {
     setLoading(true);
     try {
       const response = await CarService.getAllCars();
-      if (response.success && response.data) {
-        setCars(response.data);
-        setFilteredCars(response.data);
+      if (response && Array.isArray(response)) {
+        setCars(response || []);
+        setFilteredCars(response);
       } else {
         toast.error('Failed to load cars');
       }
@@ -74,11 +74,12 @@ const ManageCars: React.FC = () => {
 
     try {
       const response = await CarService.deleteCar(id);
-      if (response.success) {
+      console.log('Delete response:', response);
+      if (response) {
         setCars((prevCars) => prevCars.filter((car) => car.id !== id));
         toast.success('Car deleted successfully');
       } else {
-        toast.error(response.message || 'Failed to delete car');
+        toast.error('Failed to delete car');
       }
     } catch (error) {
       toast.error('An unexpected error occurred');
