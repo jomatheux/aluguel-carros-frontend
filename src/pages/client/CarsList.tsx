@@ -20,7 +20,7 @@ const CarsList: React.FC = () => {
       try {
         const response = await CarService.getAllCars();
         console.log('Fetched cars:', response);
-        if (response) {
+        if (response && Array.isArray(response)) {
           setCars(response || []);
           setFilteredCars(response || []);
         } else {
