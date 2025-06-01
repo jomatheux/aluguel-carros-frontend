@@ -1,90 +1,68 @@
 import api from './api';
-import { Car, CreateCarData, ApiResponse } from '../types';
+import { Car, CreateCarData } from '../types';
+import { AxiosResponse } from 'axios';
 
 export const CarService = {
-  async getAvailableCars(): Promise<ApiResponse<Car[]>> {
+  async getAvailableCars(): Promise<AxiosResponse> {
     try {
-      const response = await api.get<ApiResponse<Car[]>>('/carros/available');
-      return response.data;
+      const response = await api.get<AxiosResponse>('/carros/available');
+      return response;
     } catch (error: any) {
-      return {
-        success: false,
-        message: error.response?.data?.message || 'Failed to fetch available cars',
-      };
+      return error;
     }
   },
 
-  async getAllCars(): Promise<ApiResponse<Car[]>> {
+  async getAllCars(): Promise<AxiosResponse> {
     try {
-      const response = await api.get<ApiResponse<Car[]>>('/carros');
+      const response = await api.get<AxiosResponse>('/carros');
       return response.data;
     } catch (error: any) {
-      return {
-        success: false,
-        message: error.response?.data?.message || 'Failed to fetch all cars',
-      };
+      return error;
     }
   },
 
-  async getCarById(id: string): Promise<ApiResponse<Car>> {
+  async getCarById(id: string): Promise<AxiosResponse> {
     try {
-      const response = await api.get<ApiResponse<Car>>(`/carros/${id}`);
+      const response = await api.get<AxiosResponse>(`/carros/${id}`);
       return response.data;
     } catch (error: any) {
-      return {
-        success: false,
-        message: error.response?.data?.message || 'Failed to fetch car details',
-      };
+      return error;
     }
   },
 
-  async createCar(data: CreateCarData): Promise<ApiResponse<Car>> {
+  async createCar(data: CreateCarData): Promise<AxiosResponse> {
     try {
-      const response = await api.post<ApiResponse<Car>>('/carros', data);
-      return response.data;
+      const response = await api.post<AxiosResponse>('/carros', data);
+      return response;
     } catch (error: any) {
-      return {
-        success: false,
-        message: error.response?.data?.message || 'Failed to create car',
-        errors: error.response?.data?.errors,
-      };
+      return error;
     }
   },
 
-  async updateCar(id: string, data: Partial<CreateCarData>): Promise<ApiResponse<Car>> {
+  async updateCar(id: string, data: Partial<CreateCarData>): Promise<AxiosResponse> {
     try {
-      const response = await api.put<ApiResponse<Car>>(`/carros/${id}`, data);
-      return response.data;
+      const response = await api.put<AxiosResponse>(`/carros/${id}`, data);
+      return response;
     } catch (error: any) {
-      return {
-        success: false,
-        message: error.response?.data?.message || 'Failed to update car',
-        errors: error.response?.data?.errors,
-      };
+      return error;
     }
   },
 
-  async deleteCar(id: string): Promise<ApiResponse<void>> {
+  async deleteCar(id: string): Promise<AxiosResponse<void>> {
     try {
-      const response = await api.delete<ApiResponse<void>>(`/carros/${id}`);
+      const response = await api.delete<AxiosResponse<void>>(`/carros/${id}`);
       return response.data;
     } catch (error: any) {
-      return {
-        success: false,
-        message: error.response?.data?.message || 'Failed to delete car',
-      };
+      return error;
     }
   },
 
-  async updateCarStatus(id: string, status: 'available' | 'unavailable'): Promise<ApiResponse<Car>> {
+  async updateCarStatus(id: string, status: 'available' | 'unavailable'): Promise<AxiosResponse> {
     try {
-      const response = await api.patch<ApiResponse<Car>>(`/carros/${id}/status`, { status });
-      return response.data;
+      const response = await api.patch<AxiosResponse>(`/carros/${id}/status`, { status });
+      return response;
     } catch (error: any) {
-      return {
-        success: false,
-        message: error.response?.data?.message || 'Failed to update car status',
-      };
+      return error;
     }
   }
 };

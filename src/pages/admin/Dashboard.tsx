@@ -25,13 +25,13 @@ const Dashboard: React.FC = () => {
           RentalService.getAllRentals()
         ]);
 
-        if (carsResponse.success && carsResponse.data) {
+        if (carsResponse && carsResponse.data) {
           setCars(carsResponse.data);
         } else {
           toast.error('Failed to load cars data');
         }
 
-        if (rentalsResponse.success && rentalsResponse.data) {
+        if (rentalsResponse && rentalsResponse.data) {
           setRentals(rentalsResponse.data);
         } else {
           toast.error('Failed to load rentals data');

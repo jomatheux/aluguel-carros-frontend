@@ -27,9 +27,9 @@ const PaymentsOverview: React.FC = () => {
     setLoading(true);
     try {
       const response = await RentalService.getAllRentals();
-      if (response.success && response.data) {
+      if (response) {
         // Sort rentals by date (newest first)
-        const sortedRentals = response.data.sort((a, b) => 
+        const sortedRentals = response.data.sort((a: Rental, b: Rental) => 
           new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
         );
         setRentals(sortedRentals);

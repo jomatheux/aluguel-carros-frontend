@@ -27,9 +27,9 @@ const ManageRentals: React.FC = () => {
     setLoading(true);
     try {
       const response = await RentalService.getAllRentals();
-      if (response.success && response.data) {
+      if (response && response.data) {
         // Sort rentals by date (newest first)
-        const sortedRentals = response.data.sort((a, b) => 
+        const sortedRentals = response.data.sort((a: Rental, b: Rental) => 
           new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
         );
         setRentals(sortedRentals);
@@ -57,7 +57,7 @@ const ManageRentals: React.FC = () => {
   const handleStatusChange = async (id: string, newStatus: 'pending' | 'active' | 'completed' | 'cancelled') => {
     try {
       const response = await RentalService.updateRentalStatus(id, { status: newStatus });
-      if (response.success && response.data) {
+      if (response) {
         // Update the rental in the state
         setRentals((prevRentals) =>
           prevRentals.map((rental) =>
@@ -66,7 +66,7 @@ const ManageRentals: React.FC = () => {
         );
         toast.success(`Rental status updated to ${newStatus}`);
       } else {
-        toast.error(response.message || 'Failed to update rental status');
+        toast.error('Failed to update rental status');
       }
     } catch (error) {
       toast.error('An unexpected error occurred');

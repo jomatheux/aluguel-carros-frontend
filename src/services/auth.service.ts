@@ -1,38 +1,31 @@
 import api from './api';
-import { LoginCredentials, RegisterData, AuthResponse, ApiResponse } from '../types';
+import { LoginCredentials, RegisterData } from '../types';
+import { AxiosResponse } from 'axios';
 
 export const AuthService = {
-  async login(credentials: LoginCredentials): Promise<ApiResponse<AuthResponse>> {
+  async login(credentials: LoginCredentials): Promise<AxiosResponse> {
     try {
-      const response = await api.post<ApiResponse<AuthResponse>>('/auth/signin', credentials);
+      const response = await api.post<AxiosResponse>('/auth/signin', credentials);
 
       if (response.data) {
-        if (response.data.accessToken) {
-          localStorage.setItem('token', response.data.accessToken);
+        if (response.data.data?.accessToken) {
+          localStorage.setItem('token', response.data.data?.accessToken);
         }
-        localStorage.setItem('user', JSON.stringify(response.data.user));
+        localStorage.setItem('user', JSON.stringify(response.data.data?.user));
       }
 
       return response.data;
     } catch (error: any) {
-      return {
-        success: false,
-        message: error.response?.data?.message || 'Login failed',
-        errors: error.response?.data?.errors,
-      };
+      return error;
     }
   },
 
-  async register(data: RegisterData): Promise<ApiResponse<AuthResponse>> {
+  async register(data: RegisterData): Promise<AxiosResponse> {
     try {
-      const response = await api.post<ApiResponse<AuthResponse>>('/auth/signup', data);
+      const response = await api.post<AxiosResponse>('/auth/signup', data);
       return response.data;
     } catch (error: any) {
-      return {
-        success: false,
-        message: error.response?.data?.message || 'Registration failed',
-        errors: error.response?.data?.errors,
-      };
+      return error;
     }
   },
 

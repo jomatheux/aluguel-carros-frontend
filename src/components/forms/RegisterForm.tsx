@@ -116,7 +116,7 @@ const RegisterForm: React.FC = () => {
     try {
       const response = await AuthService.register(formData);
       
-      if (response.success && response.data) {
+      if (response) {
         login(response.data.accessToken, response.data.user);
         toast.success('Registration successful!');
         

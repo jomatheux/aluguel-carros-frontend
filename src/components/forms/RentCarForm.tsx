@@ -36,7 +36,7 @@ const RentCarForm: React.FC<RentCarFormProps> = ({ carId }) => {
       setLoading(true);
       try {
         const response = await CarService.getCarById(carId);
-        if (response.success && response.data) {
+        if (response) {
           setCar(response.data);
           
           // Set default dates (today and tomorrow)
@@ -75,7 +75,7 @@ const RentCarForm: React.FC<RentCarFormProps> = ({ carId }) => {
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         
         // Calculate total price
-        setTotalPrice(car.precoPorDia * diffDays);
+        setTotalPrice(Number(car.precoPorDia) * diffDays);
         
         // Clear date error if it exists
         if (errors.dates) {
@@ -134,17 +134,21 @@ const RentCarForm: React.FC<RentCarFormProps> = ({ carId }) => {
       
       const response = await RentalService.createRental(rentalData);
       
-      if (response.success && response.data) {
+      if (response) {
         toast.success('Car rental successful!');
         navigate('/rentals');
       } else {
-        toast.error(response.message || 'Failed to rent car');
+        toast.error( 'Failed to rent car');
         
         // Set field errors if available
-        if (response.errors) {
+        if (response) {
           const fieldErrors: Record<string, string> = {};
-          Object.entries(response.errors).forEach(([key, messages]) => {
-            fieldErrors[key] = messages[0];
+          Object.entries(response).forEach(([key, messages]) => {
+            if (Array.isArray(messages) && typeof messages[0] === 'string') {
+              fieldErrors[key] = messages[0];
+            } else if (typeof messages === 'string') {
+              fieldErrors[key] = messages;
+            }
           });
           setErrors(fieldErrors);
         }
@@ -189,7 +193,7 @@ const RentCarForm: React.FC<RentCarFormProps> = ({ carId }) => {
             <p className="text-neutral-500 mb-2">{car.ano} • Placa: {car.placa}</p>
             <div className="flex items-center text-primary-600">
               <DollarSign className="h-5 w-5 mr-1" />
-              <span className="text-lg font-semibold">{formatCurrency(car.precoPorDia)}</span>
+              <span className="text-lg font-semibold">{formatCurrency(Number(car.precoPorDia))}</span>
               <span className="text-neutral-500 text-sm ml-1">per day</span>
             </div>
           </div>
@@ -266,7 +270,7 @@ const RentCarForm: React.FC<RentCarFormProps> = ({ carId }) => {
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span>Daily Rate:</span>
-                <span>{formatCurrency(car.precoPorDia)}</span>
+                <span>{formatCurrency(Number(car.precoPorDia))}</span>
               </div>
               
               {totalPrice !== null && (

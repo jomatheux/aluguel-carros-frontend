@@ -92,26 +92,27 @@ const ManageCars: React.FC = () => {
       if (editingCar) {
         // Update existing car
         const response = await CarService.updateCar(editingCar.id, data);
-        if (response.success && response.data) {
+        console.log('Update response:', response);
+        if (response) {
           setCars((prevCars) =>
             prevCars.map((car) =>
-              car.id === editingCar.id ? response.data! : car
+              car.id === editingCar.id ? response.data : car
             )
           );
           toast.success('Car updated successfully');
           setShowForm(false);
         } else {
-          toast.error(response.message || 'Failed to update car');
+          toast.error('Failed to update car');
         }
       } else {
         // Add new car
         const response = await CarService.createCar(data);
-        if (response.success && response.data) {
+        if (response) {
           setCars((prevCars) => [...prevCars, response.data!]);
           toast.success('Car added successfully');
           setShowForm(false);
         } else {
-          toast.error(response.message || 'Failed to add car');
+          toast.error('Failed to add car');
         }
       }
     } catch (error) {

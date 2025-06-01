@@ -17,9 +17,9 @@ const RentalHistory: React.FC = () => {
       setLoading(true);
       try {
         const response = await RentalService.getUserRentals();
-        if (response.success && response.data) {
+        if (response) {
           // Sort rentals by date (newest first)
-          const sortedRentals = response.data.sort((a, b) => 
+          const sortedRentals = response.data.sort((a: Rental, b: Rental) => 
             new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
           );
           setRentals(sortedRentals);
@@ -39,7 +39,7 @@ const RentalHistory: React.FC = () => {
   const handleCancelRental = async (id: string) => {
     try {
       const response = await RentalService.cancelRental(id);
-      if (response.success && response.data) {
+      if (response) {
         // Update the rental in the state
         setRentals((prevRentals) =>
           prevRentals.map((rental) =>
@@ -48,7 +48,7 @@ const RentalHistory: React.FC = () => {
         );
         toast.success('Rental cancelled successfully');
       } else {
-        toast.error(response.message || 'Failed to cancel rental');
+        toast.error('Failed to cancel rental');
       }
     } catch (error) {
       toast.error('An unexpected error occurred');

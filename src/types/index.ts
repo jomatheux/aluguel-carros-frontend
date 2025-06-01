@@ -26,11 +26,6 @@ export interface RegisterData {
   telefone?: string; // Optional field
 }
 
-export interface AuthResponse {
-  user: User;
-  accessToken: string;
-}
-
 // Car types
 export interface Car {
   id: string;
@@ -72,14 +67,4 @@ export interface CreateRentalData {
 
 export interface RentalStatusUpdate {
   status: 'pending' | 'active' | 'completed' | 'cancelled';
-}
-
-// General API response
-export interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  message?: string;
-  errors?: Record<string, string[]>;
-  user?: User;
-  accessToken?: string;
 }
