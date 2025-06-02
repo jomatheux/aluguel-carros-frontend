@@ -6,7 +6,7 @@ import { AxiosResponse } from 'axios';
 export const RentalService = {
   async createRental(data: CreateRentalData): Promise<AxiosResponse> {
     try {
-      const response = await api.post<AxiosResponse>('/rentals', data);
+      const response = await api.post<AxiosResponse>('/alugueis', data);
       return response.data;
     } catch (error: any) {
       return error;
@@ -15,7 +15,7 @@ export const RentalService = {
 
   async getUserRentals(): Promise<AxiosResponse> {
     try {
-      const response = await api.get<AxiosResponse>('/rentals/user');
+      const response = await api.get<AxiosResponse>('/alugueis/user');
       return response.data;
     } catch (error: any) {
       return error;
@@ -24,7 +24,7 @@ export const RentalService = {
 
   async getAllRentals(): Promise<AxiosResponse> {
     try {
-      const response = await api.get<AxiosResponse>('/rentals');
+      const response = await api.get<AxiosResponse>('/alugueis');
       return response.data;
     } catch (error: any) {
       return error;
@@ -33,7 +33,7 @@ export const RentalService = {
 
   async getRentalById(id: string): Promise<AxiosResponse> {
     try {
-      const response = await api.get<AxiosResponse>(`/rentals/${id}`);
+      const response = await api.get<AxiosResponse>(`/alugueis/${id}`);
       return response.data;
     } catch (error: any) {
       return error;
@@ -42,7 +42,7 @@ export const RentalService = {
 
   async updateRentalStatus(id: string, statusUpdate: RentalStatusUpdate): Promise<AxiosResponse> {
     try {
-      const response = await api.patch<AxiosResponse>(`/rentals/${id}/status`, statusUpdate);
+      const response = await api.patch<AxiosResponse>(`/alugueis/${id}/status`, statusUpdate);
       return response.data;
     } catch (error: any) {
       return error;
@@ -51,7 +51,7 @@ export const RentalService = {
 
   async cancelRental(id: string): Promise<AxiosResponse> {
     try {
-      const response = await api.patch<AxiosResponse>(`/rentals/${id}/cancel`);
+      const response = await api.patch<AxiosResponse>(`/alugueis/${id}`);
       return response.data;
     } catch (error: any) {
       return error;
@@ -60,7 +60,7 @@ export const RentalService = {
 
   async getRentalsByStatus(status: string): Promise<AxiosResponse> {
     try {
-      const response = await api.get<AxiosResponse>(`/rentals/status/${status}`);
+      const response = await api.get<AxiosResponse>(`/alugueis/status/${status}`);
       return response.data;
     } catch (error: any) {
       return error;

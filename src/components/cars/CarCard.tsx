@@ -12,10 +12,14 @@ interface CarCardProps {
 
 const CarCard: React.FC<CarCardProps> = ({ car, isAdmin = false, onEdit, onDelete }) => {
   const navigate = useNavigate();
+const handleRentClick = () => {
+  if (!car.id) {
+    console.error('ID do carro não está definida!');
+    return;
+  }
+  navigate(`/rent-car/${car.id}`);
+};
 
-  const handleRentClick = () => {
-    navigate(`/rent/${car.id}`);
-  };
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {

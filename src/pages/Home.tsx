@@ -39,11 +39,11 @@ const Home: React.FC = () => {
                   </button>
                 </div>
               </div>
-              <div className="md:w-1/2">
+              <div className="md:w-1/2 flex justify-center">
                 <img 
-                  src="https://images.pexels.com/photos/3806635/pexels-photo-3806635.jpeg" 
+                  src="https://static.ndmais.com.br/2024/09/carros-luxuosos-em-sc-1.jpg" 
                   alt="Luxury car" 
-                  className="rounded-lg shadow-2xl"
+                  className="rounded-lg shadow-2x1 ml-10"
                 />
               </div>
             </div>

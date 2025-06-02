@@ -39,6 +39,7 @@ const App: React.FC = () => {
         <Route path="/cars" element={<CarsList />} />
         <Route path="/rent/:id" element={<RentCar />} />
         <Route path="/rentals" element={<RentalHistory />} />
+        <Route path="/rent-car/:id" element={<RentCar />} />
       </Route>
 
       {/* Admin routes */}
@@ -50,7 +51,8 @@ const App: React.FC = () => {
       </Route>
 
       {/* Fallback route */}
-      <Route path="*" element={<Navigate to="/\" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+
     </Routes>
   );
 };

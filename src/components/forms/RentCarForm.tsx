@@ -15,19 +15,22 @@ const RentCarForm: React.FC<RentCarFormProps> = ({ carId }) => {
   const [car, setCar] = useState<Car | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  
   const [formData, setFormData] = useState<{
-    startDate: string;
-    endDate: string;
+    dataIncio: string;
+    dataFim: string;
+    formaPagamento: 'CARTAO' | 'PIX';
   }>({
-    startDate: '',
-    endDate: '',
+    dataIncio: '',
+    dataFim: '',
+    formaPagamento: 'CARTAO',  // valor padrão
   });
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [totalPrice, setTotalPrice] = useState<number | null>(null);
-  
+
   const navigate = useNavigate();
 
-  // Format the current date as YYYY-MM-DD for min attribute of date inputs
   const today = new Date();
   const formattedToday = today.toISOString().split('T')[0];
 
@@ -36,16 +39,16 @@ const RentCarForm: React.FC<RentCarFormProps> = ({ carId }) => {
       setLoading(true);
       try {
         const response = await CarService.getCarById(carId);
+
         if (response) {
-          setCar(response.data);
-          
-          // Set default dates (today and tomorrow)
+          setCar(response);
           const tomorrow = new Date();
           tomorrow.setDate(tomorrow.getDate() + 1);
-          
+
           setFormData({
-            startDate: formattedToday,
-            endDate: tomorrow.toISOString().split('T')[0],
+            dataIncio: formattedToday,
+            dataFim: tomorrow.toISOString().split('T')[0],
+            formaPagamento: 'CARTAO',
           });
         } else {
           toast.error('Failed to load car details');
@@ -62,22 +65,17 @@ const RentCarForm: React.FC<RentCarFormProps> = ({ carId }) => {
     fetchCar();
   }, [carId, navigate, formattedToday]);
 
-  // Calculate price when dates change
   useEffect(() => {
-    if (car && formData.startDate && formData.endDate) {
-      const start = new Date(formData.startDate);
-      const end = new Date(formData.endDate);
-      
-      // Check if dates are valid
+    if (car && formData.dataIncio && formData.dataFim) {
+      const start = new Date(formData.dataIncio);
+      const end = new Date(formData.dataFim);
+
       if (start <= end) {
-        // Calculate days difference
         const diffTime = Math.abs(end.getTime() - start.getTime());
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        
-        // Calculate total price
+
         setTotalPrice(Number(car.precoPorDia) * diffDays);
-        
-        // Clear date error if it exists
+
         if (errors.dates) {
           setErrors((prev) => {
             const newErrors = { ...prev };
@@ -93,54 +91,75 @@ const RentCarForm: React.FC<RentCarFormProps> = ({ carId }) => {
         }));
       }
     }
-  }, [car, formData.startDate, formData.endDate, errors.dates]);
+  }, [car, formData.dataIncio, formData.dataFim, errors.dates]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Validation
+
     const newErrors: Record<string, string> = {};
-    
-    if (!formData.startDate) {
-      newErrors.startDate = 'Start date is required';
+
+    if (!formData.dataIncio) {
+      newErrors.dataInicio = 'Start date is required';
     }
-    
-    if (!formData.endDate) {
-      newErrors.endDate = 'End date is required';
+
+    if (!formData.dataFim) {
+      newErrors.dataFim = 'End date is required';
     }
-    
-    if (new Date(formData.startDate) > new Date(formData.endDate)) {
+
+    if (new Date(formData.dataIncio) > new Date(formData.dataFim)) {
       newErrors.dates = 'End date must be after start date';
     }
-    
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
-    
+
+    // Get userId from localStorage (or replace with your auth logic)
+    const userString = localStorage.getItem('user');
+    let userId: string | undefined;
+    if (userString) {
+      try {
+        const userObj = JSON.parse(userString);
+        userId = userObj?.id;
+      } catch (e) {
+        userId = undefined;
+      }
+    }
+
+    if (!userId) {
+      toast.error('User not found. Please log in again.');
+      setSubmitting(false);
+      return;
+    }
+
     // Submit rental
     setSubmitting(true);
     try {
-      const rentalData: CreateRentalData = {
-        carId,
-        startDate: formData.startDate,
-        endDate: formData.endDate,
-      };
-      
+        const rentalData: CreateRentalData = {
+          userId: userId,
+          carId: carId,
+          dataInicio: new Date(formData.dataIncio).toISOString(),
+          dataFim: new Date(formData.dataFim).toISOString(),
+          formaPagamento: formData.formaPagamento,
+        };
+
+
       const response = await RentalService.createRental(rentalData);
-      
+
       if (response) {
         toast.success('Car rental successful!');
         navigate('/rentals');
       } else {
-        toast.error( 'Failed to rent car');
-        
-        // Set field errors if available
+        toast.error('Failed to rent car');
+
         if (response) {
           const fieldErrors: Record<string, string> = {};
           Object.entries(response).forEach(([key, messages]) => {
@@ -160,7 +179,6 @@ const RentCarForm: React.FC<RentCarFormProps> = ({ carId }) => {
     }
   };
 
-  // Format currency
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -178,12 +196,11 @@ const RentCarForm: React.FC<RentCarFormProps> = ({ carId }) => {
 
   return (
     <div className="max-w-2xl mx-auto">
-      {/* Car info */}
       <div className="bg-white p-6 rounded-lg shadow-md mb-6">
         <div className="flex flex-col md:flex-row md:items-center gap-4">
           <div className="w-full md:w-1/3">
-            <img 
-              src={car.imagem || 'https://via.placeholder.com/300?text=No+Image'} 
+            <img
+              src={car.imagem || 'https://via.placeholder.com/300?text=No+Image'}
               alt={`${car.marca} ${car.modelo}`}
               className="w-full h-40 object-cover rounded-md"
             />
@@ -199,92 +216,105 @@ const RentCarForm: React.FC<RentCarFormProps> = ({ carId }) => {
           </div>
         </div>
       </div>
-      
-      {/* Rental form */}
+
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
         <h3 className="text-xl font-semibold mb-4">Rental Details</h3>
-        
+
         <div className="space-y-4">
-          {/* Date inputs */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="startDate" className="form-label flex items-center">
+              <label htmlFor="dataInicio" className="form-label flex items-center">
                 <Calendar className="h-4 w-4 mr-1" />
                 Start Date
               </label>
               <input
                 type="date"
-                id="startDate"
-                name="startDate"
-                className={`form-input ${errors.startDate || errors.dates ? 'border-accent-500 focus:ring-accent-500' : ''}`}
-                value={formData.startDate}
+                id="dataInicio"
+                name="dataInicio"
+                className={`form-input ${errors.dataInicio || errors.dates ? 'border-accent-500 focus:ring-accent-500' : ''}`}
+                value={formData.dataIncio}
                 onChange={handleChange}
                 min={formattedToday}
               />
-              {errors.startDate && (
+              {errors.dataInicio && (
                 <div className="form-error flex items-center mt-1">
                   <AlertCircle className="h-4 w-4 mr-1" />
-                  {errors.startDate}
+                  {errors.dataInicio}
                 </div>
               )}
             </div>
-            
+
             <div>
-              <label htmlFor="endDate" className="form-label flex items-center">
+              <label htmlFor="dataFim" className="form-label flex items-center">
                 <Calendar className="h-4 w-4 mr-1" />
                 End Date
               </label>
               <input
                 type="date"
-                id="endDate"
-                name="endDate"
-                className={`form-input ${errors.endDate || errors.dates ? 'border-accent-500 focus:ring-accent-500' : ''}`}
-                value={formData.endDate}
+                id="dataFim"
+                name="dataFim"
+                className={`form-input ${errors.dataFim || errors.dates ? 'border-accent-500 focus:ring-accent-500' : ''}`}
+                value={formData.dataFim}
                 onChange={handleChange}
-                min={formData.startDate || formattedToday}
+                min={formData.dataIncio || formattedToday}
               />
-              {errors.endDate && (
+              {errors.dataFim && (
                 <div className="form-error flex items-center mt-1">
                   <AlertCircle className="h-4 w-4 mr-1" />
-                  {errors.endDate}
+                  {errors.dataFim}
                 </div>
               )}
             </div>
           </div>
-          
-          {/* Date error message */}
+
           {errors.dates && (
             <div className="form-error flex items-center mt-1">
               <AlertCircle className="h-4 w-4 mr-1" />
               {errors.dates}
             </div>
           )}
-          
-          {/* Rental summary */}
+
+          <div>
+            <label htmlFor="formaPagamento" className="form-label flex items-center">
+              Forma de Pagamento
+            </label>
+            <select
+              id="formaPagamento"
+              name="formaPagamento"
+              className="form-input"
+              value={formData.formaPagamento}
+              onChange={handleChange}
+            >
+              <option value="CREDITO">Crédito</option>
+              <option value="DEBITO">Débito</option>
+              <option value="DINHEIRO">Dinheiro</option>
+            </select>
+          </div>
+
           <div className="bg-neutral-50 p-4 rounded-md">
             <h4 className="font-medium mb-2 flex items-center">
               <Clock className="h-4 w-4 mr-1" />
               Rental Summary
             </h4>
-            
+
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span>Daily Rate:</span>
                 <span>{formatCurrency(Number(car.precoPorDia))}</span>
               </div>
-              
+
               {totalPrice !== null && (
                 <>
                   <div className="flex justify-between">
                     <span>Duration:</span>
                     <span>
                       {Math.ceil(
-                        (new Date(formData.endDate).getTime() - new Date(formData.startDate).getTime()) / 
+                        (new Date(formData.dataFim).getTime() - new Date(formData.dataIncio).getTime()) /
                         (1000 * 60 * 60 * 24)
                       )} days
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between font-bold text-base pt-2 border-t border-neutral-200">
                     <span>Total:</span>
                     <span className="text-primary-600">{formatCurrency(totalPrice)}</span>
@@ -293,8 +323,7 @@ const RentCarForm: React.FC<RentCarFormProps> = ({ carId }) => {
               )}
             </div>
           </div>
-          
-          {/* Submit button */}
+
           <div className="pt-2">
             <button
               type="submit"

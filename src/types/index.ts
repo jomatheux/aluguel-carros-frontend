@@ -51,8 +51,8 @@ export interface CreateCarData {
 // Rental types
 export interface Rental {
   id: string;
-  startDate: string;
-  endDate: string;
+  dataInicio: string;
+  dataFim: string;
   totalAmount: number;
   status: 'pending' | 'active' | 'completed' | 'cancelled';
   car: Car;
@@ -60,9 +60,11 @@ export interface Rental {
 }
 
 export interface CreateRentalData {
+  userId: string; 
   carId: string;
-  startDate: string;
-  endDate: string;
+  dataInicio: string;
+  dataFim: string;
+  formaPagamento: string;
 }
 
 export interface RentalStatusUpdate {

@@ -15,7 +15,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles }) => {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login\" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   // If roles are specified, check if user has permission

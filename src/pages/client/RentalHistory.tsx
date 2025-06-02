@@ -16,15 +16,16 @@ const RentalHistory: React.FC = () => {
     const fetchRentals = async () => {
       setLoading(true);
       try {
-        const response = await RentalService.getUserRentals();
-        if (response) {
-          // Sort rentals by date (newest first)
-          const sortedRentals = response.data.sort((a: Rental, b: Rental) => 
-            new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+        const rentals = await RentalService.getUserRentals();
+        console.log('Rentals recebidos:', rentals);
+
+        if (Array.isArray(rentals)) {
+          const sortedRentals = rentals.sort((a: Rental, b: Rental) =>
+            new Date(b.dataInicio).getTime() - new Date(a.dataInicio).getTime()
           );
           setRentals(sortedRentals);
         } else {
-          toast.error('Failed to load rental history');
+          toast.error('Failed to load rental history: dados inválidos');
         }
       } catch (error) {
         toast.error('An unexpected error occurred');
@@ -36,11 +37,11 @@ const RentalHistory: React.FC = () => {
     fetchRentals();
   }, []);
 
+
   const handleCancelRental = async (id: string) => {
     try {
       const response = await RentalService.cancelRental(id);
       if (response) {
-        // Update the rental in the state
         setRentals((prevRentals) =>
           prevRentals.map((rental) =>
             rental.id === id ? { ...rental, status: 'cancelled' } : rental
@@ -58,14 +59,14 @@ const RentalHistory: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      
+
       <main className="flex-grow bg-neutral-50 py-12">
         <div className="container-custom">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-neutral-900 mb-2">My Rental History</h1>
             <p className="text-neutral-500">View and manage your current and past rentals</p>
           </div>
-          
+
           {loading ? (
             <Loading text="Loading your rentals..." />
           ) : rentals.length === 0 ? (
@@ -107,7 +108,7 @@ const RentalHistory: React.FC = () => {
                   </div>
                 </div>
               )}
-              
+
               {/* Past rentals section */}
               {rentals.some(rental => ['completed', 'cancelled'].includes(rental.status)) && (
                 <div>
@@ -125,7 +126,7 @@ const RentalHistory: React.FC = () => {
           )}
         </div>
       </main>
-      
+
       <Footer />
     </div>
   );

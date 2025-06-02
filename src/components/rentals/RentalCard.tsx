@@ -8,10 +8,10 @@ interface RentalCardProps {
   onStatusChange?: (id: string, status: 'pending' | 'active' | 'completed' | 'cancelled') => void;
 }
 
-const RentalCard: React.FC<RentalCardProps> = ({ 
-  rental, 
+const RentalCard: React.FC<RentalCardProps> = ({
+  rental,
   isAdmin = false,
-  onStatusChange 
+  onStatusChange
 }) => {
   // Format dates
   const formatDate = (dateString: string) => {
@@ -49,28 +49,38 @@ const RentalCard: React.FC<RentalCardProps> = ({
 
   return (
     <div className="card overflow-hidden">
+      {/* Imagem do carro */}
+      <img
+        src={rental.car.imagem || 'https://placehold.co/300x200?text=No+Image'}
+        alt={`${rental.car.marca} ${rental.car.modelo}`}
+        className="w-full h-48 object-cover"
+        onError={(e) => {
+          e.currentTarget.src = 'https://placehold.co/300x200?text=No+Image';
+        }}
+      />
+
       <div className="p-4 sm:p-6">
         {/* Header */}
         <div className="flex justify-between items-start mb-4">
           <div>
-            <h3 className="text-lg font-semibold">{rental.car.brand} {rental.car.model}</h3>
-            <p className="text-neutral-500 text-sm">Plate: {rental.car.plate}</p>
+            <h3 className="text-lg font-semibold">{rental.car.marca} {rental.car.modelo}</h3>
+            <p className="text-neutral-500 text-sm">Placa: {rental.car.placa}</p>
           </div>
           <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(rental.status)}`}>
             {rental.status.charAt(0).toUpperCase() + rental.status.slice(1)}
           </span>
         </div>
-        
+
         {/* Details */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
           <div className="flex items-center">
             <Calendar className="h-5 w-5 text-primary-500 mr-2" />
             <div>
               <div className="text-sm text-neutral-500">Rental Period</div>
-              <div>{formatDate(rental.startDate)} - {formatDate(rental.endDate)}</div>
+              <div>{formatDate(rental.dataInicio)} - {formatDate(rental.dataFim)}</div>
             </div>
           </div>
-          
+
           <div className="flex items-center">
             <DollarSign className="h-5 w-5 text-primary-500 mr-2" />
             <div>
@@ -79,7 +89,7 @@ const RentalCard: React.FC<RentalCardProps> = ({
             </div>
           </div>
         </div>
-        
+
         {/* Admin options */}
         {isAdmin && (
           <div className="mt-4 pt-4 border-t border-neutral-200">
