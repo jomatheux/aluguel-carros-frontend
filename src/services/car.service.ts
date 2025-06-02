@@ -24,7 +24,7 @@ export const CarService = {
   async getCarById(id: string): Promise<AxiosResponse> {
     try {
       const response = await api.get<AxiosResponse>(`/carros/${id}`);
-      return response.data;
+      return response;
     } catch (error: any) {
       return error;
     }

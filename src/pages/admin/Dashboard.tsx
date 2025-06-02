@@ -60,7 +60,7 @@ const Dashboard: React.FC = () => {
 
   // Get recent rentals (last 5)
   const recentRentals = [...rentals]
-    .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
+    .sort((a, b) => new Date(b.dataInicio).getTime() - new Date(a.dataInicio).getTime())
     .slice(0, 5);
 
   // Format currency
@@ -245,10 +245,10 @@ const Dashboard: React.FC = () => {
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm text-neutral-900">
-                                {formatDate(rental.startDate)}
+                                {formatDate(rental.dataInicio)}
                               </div>
                               <div className="text-xs text-neutral-500">
-                                to {formatDate(rental.endDate)}
+                                to {formatDate(rental.dataFim)}
                               </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">

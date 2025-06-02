@@ -1,5 +1,5 @@
 import api from './api';
-import { Rental, CreateRentalData, RentalStatusUpdate } from '../types';
+import { CreateRentalData, RentalStatusUpdate } from '../types';
 import { AxiosResponse } from 'axios';
 
 

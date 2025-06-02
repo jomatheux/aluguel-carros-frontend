@@ -6,6 +6,7 @@ import { RentalService } from '../../services/rental.service';
 import { Calendar, DollarSign, Clock, AlertCircle } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import Loading from '../ui/Loading';
+import { AxiosResponse } from 'axios';
 
 interface RentCarFormProps {
   carId: string;
@@ -41,7 +42,7 @@ const RentCarForm: React.FC<RentCarFormProps> = ({ carId }) => {
         const response = await CarService.getCarById(carId);
 
         if (response) {
-          setCar(response);
+          setCar((response.data));
           const tomorrow = new Date();
           tomorrow.setDate(tomorrow.getDate() + 1);
 

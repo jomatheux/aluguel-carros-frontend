@@ -128,13 +128,17 @@ const RegisterForm: React.FC = () => {
         }
       } else {
         // Show error message
-        toast.error(response.message || 'Registration failed');
+        toast.error('Registration failed');
         
         // Set field errors if available
-        if (response.errors) {
+        if (response) {
           const fieldErrors: Record<string, string> = {};
-          Object.entries(response.errors).forEach(([key, messages]) => {
-            fieldErrors[key] = messages[0];
+          Object.entries(response).forEach(([key, messages]) => {
+            if (Array.isArray(messages) && typeof messages[0] === 'string') {
+              fieldErrors[key] = messages[0];
+            } else if (typeof messages === 'string') {
+              fieldErrors[key] = messages;
+            }
           });
           setErrors(fieldErrors);
         }
