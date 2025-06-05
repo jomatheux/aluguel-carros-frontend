@@ -44,10 +44,10 @@ const RentalHistory: React.FC = () => {
       if (response) {
         setRentals((prevRentals) =>
           prevRentals.map((rental) =>
-            rental.id === id ? { ...rental, status: 'cancelled' } : rental
+            rental.id === id ? { ...rental, status: 'CANCELADO' } : rental
           )
         );
-        toast.success('Rental cancelled successfully');
+        toast.success('Rental CANCELADO successfully');
       } else {
         toast.error('Failed to cancel rental');
       }
@@ -82,16 +82,16 @@ const RentalHistory: React.FC = () => {
             </div>
           ) : (
             <div className="space-y-6">
-              {/* Active rentals section */}
-              {rentals.some(rental => ['pending', 'active'].includes(rental.status)) && (
+              {/* ATIVA rentals section */}
+              {rentals.some(rental => ['PENDENTE', 'ATIVA'].includes(rental.status)) && (
                 <div>
-                  <h2 className="text-xl font-semibold mb-4">Active Rentals</h2>
+                  <h2 className="text-xl font-semibold mb-4">ATIVA Rentals</h2>
                   <div className="space-y-4">
                     {rentals
-                      .filter(rental => ['pending', 'active'].includes(rental.status))
+                      .filter(rental => ['PENDENTE', 'ATIVA'].includes(rental.status))
                       .map(rental => (
                         <div key={rental.id} className="relative">
-                          {rental.status === 'pending' && (
+                          {rental.status === 'ATIVA' && (
                             <div className="absolute right-4 top-4 z-10">
                               <button
                                 onClick={() => handleCancelRental(rental.id)}
@@ -110,12 +110,12 @@ const RentalHistory: React.FC = () => {
               )}
 
               {/* Past rentals section */}
-              {rentals.some(rental => ['completed', 'cancelled'].includes(rental.status)) && (
+              {rentals.some(rental => ['FINALIZADO', 'CANCELADO'].includes(rental.status)) && (
                 <div>
                   <h2 className="text-xl font-semibold mb-4">Past Rentals</h2>
                   <div className="space-y-4">
                     {rentals
-                      .filter(rental => ['completed', 'cancelled'].includes(rental.status))
+                      .filter(rental => ['FINALIZADO', 'CANCELADO'].includes(rental.status))
                       .map(rental => (
                         <RentalCard key={rental.id} rental={rental} />
                       ))}

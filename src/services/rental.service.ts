@@ -1,5 +1,5 @@
 import api from './api';
-import { CreateRentalData, RentalStatusUpdate } from '../types';
+import { CreateRentalData, RentalStatusUpdate, Rental } from '../types';
 import { AxiosResponse } from 'axios';
 
 
@@ -13,14 +13,12 @@ export const RentalService = {
     }
   },
 
-  async getUserRentals(): Promise<AxiosResponse> {
-    try {
-      const response = await api.get<AxiosResponse>('/alugueis/user');
-      return response.data;
-    } catch (error: any) {
-      return error;
-    }
+  async getUserRentals(): Promise<Rental[]> {
+    const response = await api.get('/alugueis/user');
+    console.log('Response from getUserRentals:', response);
+    return response.data;
   },
+
 
   async getAllRentals(): Promise<AxiosResponse> {
     try {

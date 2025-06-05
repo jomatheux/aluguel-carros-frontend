@@ -18,11 +18,11 @@ const RentCarForm: React.FC<RentCarFormProps> = ({ carId }) => {
   const [submitting, setSubmitting] = useState(false);
   
   const [formData, setFormData] = useState<{
-    dataIncio: string;
+    dataInicio: string;
     dataFim: string;
     formaPagamento: 'CARTAO' | 'PIX';
   }>({
-    dataIncio: '',
+    dataInicio: '',
     dataFim: '',
     formaPagamento: 'CARTAO',  // valor padrão
   });
@@ -47,7 +47,7 @@ const RentCarForm: React.FC<RentCarFormProps> = ({ carId }) => {
           tomorrow.setDate(tomorrow.getDate() + 1);
 
           setFormData({
-            dataIncio: formattedToday,
+            dataInicio: formattedToday,
             dataFim: tomorrow.toISOString().split('T')[0],
             formaPagamento: 'CARTAO',
           });
@@ -67,8 +67,8 @@ const RentCarForm: React.FC<RentCarFormProps> = ({ carId }) => {
   }, [carId, navigate, formattedToday]);
 
   useEffect(() => {
-    if (car && formData.dataIncio && formData.dataFim) {
-      const start = new Date(formData.dataIncio);
+    if (car && formData.dataInicio && formData.dataFim) {
+      const start = new Date(formData.dataInicio);
       const end = new Date(formData.dataFim);
 
       if (start <= end) {
@@ -92,7 +92,7 @@ const RentCarForm: React.FC<RentCarFormProps> = ({ carId }) => {
         }));
       }
     }
-  }, [car, formData.dataIncio, formData.dataFim, errors.dates]);
+  }, [car, formData.dataInicio, formData.dataFim, errors.dates]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -106,7 +106,7 @@ const RentCarForm: React.FC<RentCarFormProps> = ({ carId }) => {
 
     const newErrors: Record<string, string> = {};
 
-    if (!formData.dataIncio) {
+    if (!formData.dataInicio) {
       newErrors.dataInicio = 'Start date is required';
     }
 
@@ -114,7 +114,7 @@ const RentCarForm: React.FC<RentCarFormProps> = ({ carId }) => {
       newErrors.dataFim = 'End date is required';
     }
 
-    if (new Date(formData.dataIncio) > new Date(formData.dataFim)) {
+    if (new Date(formData.dataInicio) > new Date(formData.dataFim)) {
       newErrors.dates = 'End date must be after start date';
     }
 
@@ -145,9 +145,9 @@ const RentCarForm: React.FC<RentCarFormProps> = ({ carId }) => {
     setSubmitting(true);
     try {
         const rentalData: CreateRentalData = {
-          userId: userId,
-          carId: carId,
-          dataInicio: new Date(formData.dataIncio).toISOString(),
+          usuarioId: userId,
+          carroId: carId,
+          dataInicio: new Date(formData.dataInicio).toISOString(),
           dataFim: new Date(formData.dataFim).toISOString(),
           formaPagamento: formData.formaPagamento,
         };
@@ -233,7 +233,7 @@ const RentCarForm: React.FC<RentCarFormProps> = ({ carId }) => {
                 id="dataInicio"
                 name="dataInicio"
                 className={`form-input ${errors.dataInicio || errors.dates ? 'border-accent-500 focus:ring-accent-500' : ''}`}
-                value={formData.dataIncio}
+                value={formData.dataInicio}
                 onChange={handleChange}
                 min={formattedToday}
               />
@@ -257,7 +257,7 @@ const RentCarForm: React.FC<RentCarFormProps> = ({ carId }) => {
                 className={`form-input ${errors.dataFim || errors.dates ? 'border-accent-500 focus:ring-accent-500' : ''}`}
                 value={formData.dataFim}
                 onChange={handleChange}
-                min={formData.dataIncio || formattedToday}
+                min={formData.dataInicio || formattedToday}
               />
               {errors.dataFim && (
                 <div className="form-error flex items-center mt-1">
@@ -286,9 +286,8 @@ const RentCarForm: React.FC<RentCarFormProps> = ({ carId }) => {
               value={formData.formaPagamento}
               onChange={handleChange}
             >
-              <option value="CREDITO">Crédito</option>
-              <option value="DEBITO">Débito</option>
-              <option value="DINHEIRO">Dinheiro</option>
+              <option value="CREDITO">CARTAO</option>
+              <option value="DINHEIRO">PIX</option>
             </select>
           </div>
 
@@ -310,7 +309,7 @@ const RentCarForm: React.FC<RentCarFormProps> = ({ carId }) => {
                     <span>Duration:</span>
                     <span>
                       {Math.ceil(
-                        (new Date(formData.dataFim).getTime() - new Date(formData.dataIncio).getTime()) /
+                        (new Date(formData.dataFim).getTime() - new Date(formData.dataInicio).getTime()) /
                         (1000 * 60 * 60 * 24)
                       )} days
                     </span>
