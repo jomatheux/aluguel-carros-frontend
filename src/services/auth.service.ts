@@ -14,7 +14,7 @@ export const AuthService = {
         localStorage.setItem('user', JSON.stringify(response.data.data?.user));
       }
 
-      return response.data;
+      return response;
     } catch (error: any) {
       return error;
     }

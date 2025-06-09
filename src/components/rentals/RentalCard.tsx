@@ -5,7 +5,7 @@ import { Calendar, DollarSign, Clock, Car as CarIcon, Check, X } from 'lucide-re
 interface RentalCardProps {
   rental: Rental;
   isAdmin?: boolean;
-  onStatusChange?: (id: string, status: 'pending' | 'active' | 'completed' | 'cancelled') => void;
+  onStatusChange?: (id: string, status: 'PENDENTE' | 'ATIVA' | 'FINALIZADO' | 'CANCELADO') => void;
 }
 
 const RentalCard: React.FC<RentalCardProps> = ({
@@ -51,8 +51,8 @@ const RentalCard: React.FC<RentalCardProps> = ({
     <div className="card overflow-hidden">
       {/* Imagem do carro */}
       <img
-        src={rental.car.imagem || 'https://placehold.co/300x200?text=No+Image'}
-        alt={`${rental.car.marca} ${rental.car.modelo}`}
+        src={rental.carro.imagem || 'https://placehold.co/300x200?text=No+Image'}
+        alt={`${rental.carro.marca} ${rental.carro.modelo}`}
         className="w-full h-48 object-cover"
         onError={(e) => {
           e.currentTarget.src = 'https://placehold.co/300x200?text=No+Image';
@@ -63,8 +63,8 @@ const RentalCard: React.FC<RentalCardProps> = ({
         {/* Header */}
         <div className="flex justify-between items-start mb-4">
           <div>
-            <h3 className="text-lg font-semibold">{rental.car.marca} {rental.car.modelo}</h3>
-            <p className="text-neutral-500 text-sm">Placa: {rental.car.placa}</p>
+            <h3 className="text-lg font-semibold">{rental.carro.marca} {rental.carro.modelo}</h3>
+            <p className="text-neutral-500 text-sm">Placa: {rental.carro.placa}</p>
           </div>
           <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${getStatusColor(rental.status)}`}>
             {rental.status.charAt(0).toUpperCase() + rental.status.slice(1)}
@@ -85,7 +85,7 @@ const RentalCard: React.FC<RentalCardProps> = ({
             <DollarSign className="h-5 w-5 text-primary-500 mr-2" />
             <div>
               <div className="text-sm text-neutral-500">Total Amount</div>
-              <div className="font-semibold">{formatCurrency(rental.totalAmount)}</div>
+              <div className="font-semibold">{formatCurrency(rental.valorTotal)}</div>
             </div>
           </div>
         </div>
@@ -97,21 +97,21 @@ const RentalCard: React.FC<RentalCardProps> = ({
               <div className="flex items-center">
                 <Clock className="h-5 w-5 text-neutral-500 mr-2" />
                 <span className="text-sm">
-                  Rented by: <span className="font-medium">{rental.user.name}</span>
+                  Rented by: <span className="font-medium">{rental.usuario.name}</span>
                 </span>
               </div>
               <div className="flex space-x-2">
-                {rental.status === 'pending' && (
+                {rental.status === 'PENDENTE' && (
                   <>
                     <button
-                      onClick={() => onStatusChange && onStatusChange(rental.id, 'active')}
+                      onClick={() => onStatusChange && onStatusChange(rental.id, 'ATIVA')}
                       className="btn-primary text-xs py-1 px-2 flex items-center"
                     >
                       <Check className="h-3 w-3 mr-1" />
                       Approve
                     </button>
                     <button
-                      onClick={() => onStatusChange && onStatusChange(rental.id, 'cancelled')}
+                      onClick={() => onStatusChange && onStatusChange(rental.id, 'CANCELADO')}
                       className="btn-accent text-xs py-1 px-2 flex items-center"
                     >
                       <X className="h-3 w-3 mr-1" />
@@ -119,9 +119,9 @@ const RentalCard: React.FC<RentalCardProps> = ({
                     </button>
                   </>
                 )}
-                {rental.status === 'active' && (
+                {rental.status === 'ATIVA' && (
                   <button
-                    onClick={() => onStatusChange && onStatusChange(rental.id, 'completed')}
+                    onClick={() => onStatusChange && onStatusChange(rental.id, 'FINALIZADO')}
                     className="btn-secondary text-xs py-1 px-2 flex items-center"
                   >
                     <Check className="h-3 w-3 mr-1" />

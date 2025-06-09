@@ -27,6 +27,7 @@ const PaymentsOverview: React.FC = () => {
     setLoading(true);
     try {
       const response = await RentalService.getAllRentals();
+      console.log('Response from fetchRentals:', response);
       if (response) {
         // Sort rentals by date (newest first)
         const sortedRentals = response.data.sort((a: Rental, b: Rental) => 
@@ -55,20 +56,20 @@ const PaymentsOverview: React.FC = () => {
   };
 
   // Calculate total amounts
-  const totalAmount = filteredRentals.reduce((sum, rental) => sum + rental.totalAmount, 0);
+  const totalAmount = filteredRentals.reduce((sum, rental) => sum + rental.valorTotal, 0);
   
   // Calculate status-specific amounts
   const paidAmount = filteredRentals
-    .filter(r => ['active', 'completed'].includes(r.status))
-    .reduce((sum, rental) => sum + rental.totalAmount, 0);
+    .filter(r => ['ATIVA', 'FINALIZADO'].includes(r.status))
+    .reduce((sum, rental) => sum + rental.valorTotal, 0);
   
   const pendingAmount = filteredRentals
-    .filter(r => r.status === 'pending')
-    .reduce((sum, rental) => sum + rental.totalAmount, 0);
+    .filter(r => r.status === 'PENDENTE')
+    .reduce((sum, rental) => sum + rental.valorTotal, 0);
   
   const cancelledAmount = filteredRentals
-    .filter(r => r.status === 'cancelled')
-    .reduce((sum, rental) => sum + rental.totalAmount, 0);
+    .filter(r => r.status === 'CANCELADO')
+    .reduce((sum, rental) => sum + rental.valorTotal, 0);
 
   // Format currency
   const formatCurrency = (amount: number) => {

@@ -23,7 +23,7 @@ export const RentalService = {
   async getAllRentals(): Promise<AxiosResponse> {
     try {
       const response = await api.get<AxiosResponse>('/alugueis');
-      return response.data;
+      return response;
     } catch (error: any) {
       return error;
     }

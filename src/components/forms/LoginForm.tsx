@@ -58,24 +58,28 @@ const LoginForm: React.FC = () => {
     try {
       const response = await AuthService.login(formData);
 
-      if (response && response.user) {
-        login(response.accessToken || '', response.user);
+      if (response && response.data.user) {
+        login(response.data.accessToken || '', response.data.user);
         toast.success('Login successful!');
         // Redirect based on role
-        if (response.user.role === 'ADMIN') {
+        if (response.data.user.role === 'ADMIN') {
           navigate('/admin/dashboard');
         } else {
           navigate('/cars');
         }
       } else {
         // Show error message
-        toast.error(response.message || 'Login failed');
+        toast.error(response.data.message || 'Login failed');
         
         // Set field errors if available
-        if (response.errors) {
+        if (response.data.errors) {
           const fieldErrors: Record<string, string> = {};
-          Object.entries(response.errors).forEach(([key, messages]) => {
-            fieldErrors[key] = messages[0];
+          Object.entries(response.data.errors).forEach(([key, messages]) => {
+            if (Array.isArray(messages) && typeof messages[0] === 'string') {
+              fieldErrors[key] = messages[0];
+            } else if (typeof messages === 'string') {
+              fieldErrors[key] = messages;
+            }
           });
           setErrors(fieldErrors);
         }

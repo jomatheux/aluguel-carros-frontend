@@ -54,9 +54,10 @@ export interface Rental {
   dataInicio: string;
   dataFim: string;
   valorTotal: number;
-  status: 'ATIVA' | 'CANCELADO' | 'FINALIZADO';
+  status: 'ATIVA' | 'CANCELADO' | 'FINALIZADO' | 'PENDENTE' | 'all';
   carro: Car;
   usuarioId: string;
+  usuario: User;
   pagamentoId: string;
 }
 
@@ -69,5 +70,5 @@ export interface CreateRentalData {
 }
 
 export interface RentalStatusUpdate {
-  status: 'ATIVA' | 'CANCELADO' | 'FINALIZADO';
+  status: 'ATIVA' | 'CANCELADO' | 'FINALIZADO' | 'PENDENTE';
 }

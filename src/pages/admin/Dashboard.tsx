@@ -49,14 +49,14 @@ const Dashboard: React.FC = () => {
   // Calculate statistics
   const totalCars = cars.length;
   const availableCars = cars.filter(car => car.status === 'DISPONIVEL').length;
-  const activeRentals = rentals.filter(rental => rental.status === 'active').length;
-  const pendingRentals = rentals.filter(rental => rental.status === 'pending').length;
-  const completedRentals = rentals.filter(rental => rental.status === 'completed').length;
+  const activeRentals = rentals.filter(rental => rental.status === 'ATIVA').length;
+  const pendingRentals = rentals.filter(rental => rental.status === 'PENDENTE').length;
+  const completedRentals = rentals.filter(rental => rental.status === 'FINALIZADO').length;
   
   // Calculate total revenue from completed rentals
   const totalRevenue = rentals
-    .filter(rental => rental.status === 'completed')
-    .reduce((total, rental) => total + rental.totalAmount, 0);
+    .filter(rental => rental.status === 'FINALIZADO')
+    .reduce((total, rental) => total + rental.valorTotal, 0);
 
   // Get recent rentals (last 5)
   const recentRentals = [...rentals]
@@ -230,17 +230,17 @@ const Dashboard: React.FC = () => {
                                 </div>
                                 <div className="ml-3">
                                   <div className="text-sm font-medium text-neutral-900">
-                                    {rental.user.name}
+                                    {rental.usuario.name}
                                   </div>
                                 </div>
                               </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm text-neutral-900">
-                                {rental.car.marca} {rental.car.modelo}
+                                {rental.carro.marca} {rental.carro.modelo}
                               </div>
                               <div className="text-xs text-neutral-500">
-                                {rental.car.placa}
+                                {rental.carro.placa}
                               </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
@@ -252,15 +252,15 @@ const Dashboard: React.FC = () => {
                               </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                              {formatCurrency(rental.totalAmount)}
+                              {formatCurrency(rental.valorTotal)}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                rental.status === 'pending'
+                                rental.status === 'PENDENTE'
                                   ? 'bg-yellow-100 text-yellow-800'
-                                  : rental.status === 'active'
+                                  : rental.status === 'ATIVA'
                                   ? 'bg-blue-100 text-blue-800'
-                                  : rental.status === 'completed'
+                                  : rental.status === 'FINALIZADO'
                                   ? 'bg-green-100 text-green-800'
                                   : 'bg-red-100 text-red-800'
                               }`}>

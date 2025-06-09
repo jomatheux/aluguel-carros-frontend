@@ -54,7 +54,7 @@ const ManageRentals: React.FC = () => {
     setFilteredRentals(filtered);
   };
 
-  const handleStatusChange = async (id: string, newStatus: 'pending' | 'active' | 'completed' | 'cancelled') => {
+  const handleStatusChange = async (id: string, newStatus: 'PENDENTE' | 'ATIVA' | 'FINALIZADO' | 'CANCELADO') => {
     try {
       const response = await RentalService.updateRentalStatus(id, { status: newStatus });
       if (response) {

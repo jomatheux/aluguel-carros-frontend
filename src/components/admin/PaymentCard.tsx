@@ -67,7 +67,7 @@ const PaymentCard: React.FC<PaymentCardProps> = ({ rental }) => {
               <h3 className="text-lg font-semibold">Payment #{rental.id.slice(0, 8)}</h3>
             </div>
             <p className="text-neutral-500 text-sm">
-              For {rental.car.marca} {rental.car.modelo} ({rental.car.placa})
+              For {rental.carro.marca} {rental.carro.modelo} ({rental.carro.placa})
             </p>
           </div>
           
@@ -81,7 +81,7 @@ const PaymentCard: React.FC<PaymentCardProps> = ({ rental }) => {
             <User className="h-5 w-5 text-neutral-500 mr-2 mt-0.5" />
             <div>
               <div className="text-sm text-neutral-500">Customer</div>
-              <div>{rental.user.name}</div>
+              <div>{rental.usuario.name}</div>
             </div>
           </div>
           
@@ -89,7 +89,7 @@ const PaymentCard: React.FC<PaymentCardProps> = ({ rental }) => {
             <Calendar className="h-5 w-5 text-neutral-500 mr-2 mt-0.5" />
             <div>
               <div className="text-sm text-neutral-500">Rental Period</div>
-              <div>{formatDate(rental.startDate)} - {formatDate(rental.endDate)}</div>
+              <div>{formatDate(rental.dataInicio)} - {formatDate(rental.dataFim)}</div>
             </div>
           </div>
           
@@ -97,7 +97,7 @@ const PaymentCard: React.FC<PaymentCardProps> = ({ rental }) => {
             <DollarSign className="h-5 w-5 text-neutral-500 mr-2 mt-0.5" />
             <div>
               <div className="text-sm text-neutral-500">Amount</div>
-              <div className="font-semibold">{formatCurrency(rental.totalAmount)}</div>
+              <div className="font-semibold">{formatCurrency(rental.valorTotal)}</div>
             </div>
           </div>
         </div>
@@ -108,7 +108,7 @@ const PaymentCard: React.FC<PaymentCardProps> = ({ rental }) => {
               Transaction ID: <span className="font-mono">{rental.id}</span>
             </span>
             <span className="text-sm text-neutral-500">
-              {formatDate(rental.startDate)}
+              {formatDate(rental.dataInicio)}
             </span>
           </div>
         </div>
