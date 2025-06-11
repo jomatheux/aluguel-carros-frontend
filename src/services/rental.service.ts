@@ -14,10 +14,12 @@ export const RentalService = {
   },
 
   async getUserRentals(): Promise<Rental[]> {
-    const response = await api.get('/alugueis/user');
-    console.log('Response from getUserRentals:', response);
-    return response.data;
-  },
+  const response = await api.get('/alugueis/user');
+  return response.data.map((rental: any) => ({
+    ...rental,
+    valorTotal: Number(rental.valorTotal) // Conversão crucial
+  }));
+},
 
 
   async getAllRentals(): Promise<AxiosResponse> {

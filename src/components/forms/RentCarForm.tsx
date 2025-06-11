@@ -287,7 +287,7 @@ const RentCarForm: React.FC<RentCarFormProps> = ({ carId }) => {
               onChange={handleChange}
             >
               <option value="CREDITO">CARTAO</option>
-              <option value="DINHEIRO">PIX</option>
+              <option value="PIX">PIX</option>
             </select>
           </div>
 
