@@ -28,9 +28,9 @@ const RentalFilter: React.FC<RentalFilterProps> = ({
           All
         </button>
         <button
-          onClick={() => onStatusFilterChange('pending')}
+          onClick={() => onStatusFilterChange('PENDENTE')}
           className={`px-3 py-1 rounded-full text-sm ${
-            statusFilter === 'pending'
+            statusFilter === 'PENDENTE'
               ? 'bg-yellow-100 text-yellow-700 border border-yellow-300'
               : 'bg-neutral-100 text-neutral-600 border border-neutral-200 hover:bg-neutral-200'
           }`}
@@ -38,9 +38,9 @@ const RentalFilter: React.FC<RentalFilterProps> = ({
           Pending
         </button>
         <button
-          onClick={() => onStatusFilterChange('active')}
+          onClick={() => onStatusFilterChange('ATIVA')}
           className={`px-3 py-1 rounded-full text-sm ${
-            statusFilter === 'active'
+            statusFilter === 'ATIVA'
               ? 'bg-blue-100 text-blue-700 border border-blue-300'
               : 'bg-neutral-100 text-neutral-600 border border-neutral-200 hover:bg-neutral-200'
           }`}
@@ -48,19 +48,9 @@ const RentalFilter: React.FC<RentalFilterProps> = ({
           Active
         </button>
         <button
-          onClick={() => onStatusFilterChange('completed')}
+          onClick={() => onStatusFilterChange('CANCELADO')}
           className={`px-3 py-1 rounded-full text-sm ${
-            statusFilter === 'completed'
-              ? 'bg-green-100 text-green-700 border border-green-300'
-              : 'bg-neutral-100 text-neutral-600 border border-neutral-200 hover:bg-neutral-200'
-          }`}
-        >
-          Completed
-        </button>
-        <button
-          onClick={() => onStatusFilterChange('cancelled')}
-          className={`px-3 py-1 rounded-full text-sm ${
-            statusFilter === 'cancelled'
+            statusFilter === 'CANCELADO'
               ? 'bg-red-100 text-red-700 border border-red-300'
               : 'bg-neutral-100 text-neutral-600 border border-neutral-200 hover:bg-neutral-200'
           }`}
