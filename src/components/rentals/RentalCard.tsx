@@ -34,13 +34,13 @@ const RentalCard: React.FC<RentalCardProps> = ({
   // Get status color
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending':
+      case 'PENDENTE':
         return 'bg-yellow-100 text-yellow-800';
-      case 'active':
+      case 'ATIVA':
         return 'bg-blue-100 text-blue-800';
-      case 'completed':
+      case 'FINALIZADO':
         return 'bg-green-100 text-green-800';
-      case 'cancelled':
+      case 'CANCELADO':
         return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
