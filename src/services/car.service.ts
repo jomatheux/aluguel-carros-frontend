@@ -3,12 +3,12 @@ import { Car, CreateCarData } from '../types';
 import { AxiosResponse } from 'axios';
 
 export const CarService = {
-  async getAvailableCars(): Promise<AxiosResponse> {
+  async getAvailableCars(): Promise<Car[]> {
     try {
-      const response = await api.get<AxiosResponse>('/carros/available');
-      return response;
+      const response = await api.get('/carros/available');
+      return response.data;
     } catch (error: any) {
-      return error;
+      throw new Error(error.response?.data?.message || 'Error fetching available cars');
     }
   },
 
