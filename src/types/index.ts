@@ -71,4 +71,5 @@ export interface CreateRentalData {
 
 export interface RentalStatusUpdate {
   status: 'ATIVA' | 'CANCELADO' | 'FINALIZADO' | 'PENDENTE';
+  carroId?: string; // Optional, used when updating status to 'CANCELADO'
 }

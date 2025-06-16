@@ -56,7 +56,7 @@ const ManageRentals: React.FC = () => {
 
   const handleStatusChange = async (id: string, newStatus: 'PENDENTE' | 'ATIVA' | 'FINALIZADO' | 'CANCELADO') => {
     try {
-      const response = await RentalService.updateRentalStatus(id, { status: newStatus });
+      const response = await RentalService.updateRentalStatus(id, { status: newStatus, carroId: rentals.find(rental => rental.id === id)?.carro.id || '' });
       if (response) {
         // Update the rental in the state
         setRentals((prevRentals) =>
