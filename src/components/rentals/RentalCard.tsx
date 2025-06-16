@@ -11,7 +11,7 @@ interface RentalCardProps {
 const RentalCard: React.FC<RentalCardProps> = ({
   rental,
   isAdmin = false,
-  onStatusChange
+  onStatusChange,
 }) => {
   // Format dates
   const formatDate = (dateString: string) => {
@@ -97,7 +97,7 @@ const RentalCard: React.FC<RentalCardProps> = ({
               <div className="flex items-center">
                 <Clock className="h-5 w-5 text-neutral-500 mr-2" />
                 <span className="text-sm">
-                  Rented by: <span className="font-medium">{rental.usuario.name}</span>
+                  Rented by: <span className="font-medium">{rental.usuario.nome}</span>
                 </span>
               </div>
               <div className="flex space-x-2">

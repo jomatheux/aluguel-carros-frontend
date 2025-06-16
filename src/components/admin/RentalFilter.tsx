@@ -57,6 +57,16 @@ const RentalFilter: React.FC<RentalFilterProps> = ({
         >
           Cancelled
         </button>
+        <button
+          onClick={() => onStatusFilterChange('FINALIZADO')}
+          className={`px-3 py-1 rounded-full text-sm ${
+            statusFilter === 'FINALIZADO'
+              ? 'bg-red-100 text-red-700 border border-red-300'
+              : 'bg-neutral-100 text-neutral-600 border border-neutral-200 hover:bg-neutral-200'
+          }`}
+        >
+          Finalizado
+        </button>
       </div>
     </div>
   );

@@ -20,9 +20,9 @@ const CarsList: React.FC = () => {
       try {
         const response = await CarService.getAllCars();
         console.log('Fetched cars:', response);
-        if (response && Array.isArray(response)) {
-          setCars(response || []);
-          setFilteredCars(response || []);
+        if (response && Array.isArray(response.data)) {
+          setCars(response.data || []);
+          setFilteredCars(response.data || []);
         } else {
           toast.error('Failed to load available cars');
         }

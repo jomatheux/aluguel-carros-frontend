@@ -25,6 +25,8 @@ const Dashboard: React.FC = () => {
           RentalService.getAllRentals()
         ]);
 
+        console.log('Cars Response:', carsResponse);
+
         if (carsResponse && carsResponse.data) {
           setCars(carsResponse.data);
         } else {
@@ -230,7 +232,7 @@ const Dashboard: React.FC = () => {
                                 </div>
                                 <div className="ml-3">
                                   <div className="text-sm font-medium text-neutral-900">
-                                    {rental.usuario.name}
+                                    {rental.usuario.nome}
                                   </div>
                                 </div>
                               </div>

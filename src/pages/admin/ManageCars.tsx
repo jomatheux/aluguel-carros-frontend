@@ -44,9 +44,9 @@ const ManageCars: React.FC = () => {
     setLoading(true);
     try {
       const response = await CarService.getAllCars();
-      if (response && Array.isArray(response)) {
-        setCars(response || []);
-        setFilteredCars(response);
+      if (response && Array.isArray(response.data)) {
+        setCars(response.data || []);
+        setFilteredCars(response.data || []);
       } else {
         toast.error('Failed to load cars');
       }

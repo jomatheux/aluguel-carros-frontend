@@ -38,9 +38,9 @@ const RentalHistory: React.FC = () => {
   }, []);
 
 
-  const handleCancelRental = async (id: string) => {
+  const handleCancelRental = async (id: string, carId: string) => {
     try {
-      const response = await RentalService.cancelRental(id);
+      const response = await RentalService.cancelRental(id, carId);
       if (response) {
         setRentals((prevRentals) =>
           prevRentals.map((rental) =>
@@ -94,7 +94,7 @@ const RentalHistory: React.FC = () => {
                           {rental.status === 'ATIVA' && (
                             <div className="absolute right-4 top-4 z-10">
                               <button
-                                onClick={() => handleCancelRental(rental.id)}
+                                onClick={() => handleCancelRental(rental.id, rental.carro.id)}
                                 className="flex items-center text-xs px-2 py-1 bg-red-100 text-red-700 rounded-full hover:bg-red-200"
                               >
                                 <AlertTriangle className="h-3 w-3 mr-1" />

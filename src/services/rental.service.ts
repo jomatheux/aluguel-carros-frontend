@@ -46,9 +46,9 @@ export const RentalService = {
     }
   },
 
-  async cancelRental(id: string): Promise<AxiosResponse> {
+  async cancelRental(id: string, carId: string): Promise<AxiosResponse> {
     try {
-      const response = await api.patch<AxiosResponse>(`/alugueis/${id}/status`, { status: 'CANCELADO' });
+      const response = await api.patch<AxiosResponse>(`/alugueis/${id}/status`, { status: 'CANCELADO', carroId: carId });
       return response.data;
     } catch (error: any) {
       return error;

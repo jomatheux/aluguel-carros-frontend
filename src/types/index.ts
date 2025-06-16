@@ -1,7 +1,7 @@
 // User types
 export interface User {
   id: string;
-  name: string;
+  nome: string;
   email: string;
   cpf: string;
   cnh: string;

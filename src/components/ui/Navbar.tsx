@@ -36,9 +36,12 @@ const Navbar: React.FC = () => {
                 <Link to="/" className="text-neutral-700 hover:text-primary-500 transition-colors">
                   Home
                 </Link>
-                
+
                 {isAdmin() ? (
                   <>
+                    <Link to="/admin/dashboard" className="text-neutral-700 hover:text-primary-500 transition-colors">
+                      Dashboard
+                    </Link>
                     <Link to="/admin/cars" className="text-neutral-700 hover:text-primary-500 transition-colors">
                       Manage Cars
                     </Link>
@@ -59,12 +62,12 @@ const Navbar: React.FC = () => {
                     </Link>
                   </>
                 )}
-                
+
                 <div className="flex items-center space-x-3">
                   <span className="text-neutral-700">
-                    Hi, { userDetails?.nome }
+                    Hi, {userDetails?.nome}
                   </span>
-                  <button 
+                  <button
                     onClick={handleLogout}
                     className="flex items-center text-accent-500 hover:text-accent-600"
                   >
@@ -87,7 +90,7 @@ const Navbar: React.FC = () => {
 
           {/* Mobile menu button */}
           <div className="md:hidden">
-            <button 
+            <button
               onClick={toggleMenu}
               className="text-neutral-700 hover:text-primary-500"
               aria-label="Toggle menu"
@@ -107,32 +110,32 @@ const Navbar: React.FC = () => {
             <div className="flex flex-col space-y-3">
               {isAuthenticated ? (
                 <>
-                  <Link 
-                    to="/" 
+                  <Link
+                    to="/"
                     className="text-neutral-700 hover:text-primary-500 transition-colors py-2"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Home
                   </Link>
-                  
+
                   {isAdmin() ? (
                     <>
-                      <Link 
-                        to="/admin/cars" 
+                      <Link
+                        to="/admin/cars"
                         className="text-neutral-700 hover:text-primary-500 transition-colors py-2"
                         onClick={() => setIsMenuOpen(false)}
                       >
                         Manage Cars
                       </Link>
-                      <Link 
-                        to="/admin/rentals" 
+                      <Link
+                        to="/admin/rentals"
                         className="text-neutral-700 hover:text-primary-500 transition-colors py-2"
                         onClick={() => setIsMenuOpen(false)}
                       >
                         Manage Rentals
                       </Link>
-                      <Link 
-                        to="/admin/payments" 
+                      <Link
+                        to="/admin/payments"
                         className="text-neutral-700 hover:text-primary-500 transition-colors py-2"
                         onClick={() => setIsMenuOpen(false)}
                       >
@@ -141,15 +144,15 @@ const Navbar: React.FC = () => {
                     </>
                   ) : (
                     <>
-                      <Link 
-                        to="/cars" 
+                      <Link
+                        to="/cars"
                         className="text-neutral-700 hover:text-primary-500 transition-colors py-2"
                         onClick={() => setIsMenuOpen(false)}
                       >
                         Available Cars
                       </Link>
-                      <Link 
-                        to="/rentals" 
+                      <Link
+                        to="/rentals"
                         className="text-neutral-700 hover:text-primary-500 transition-colors py-2"
                         onClick={() => setIsMenuOpen(false)}
                       >
@@ -157,15 +160,15 @@ const Navbar: React.FC = () => {
                       </Link>
                     </>
                   )}
-                  
+
                   <div className="flex items-center space-x-2 py-2 border-t border-neutral-200 mt-2">
                     <UserIcon className="h-5 w-5 text-neutral-500" />
                     <span className="text-neutral-700">
                       {user?.name}
                     </span>
                   </div>
-                  
-                  <button 
+
+                  <button
                     onClick={() => {
                       handleLogout();
                       setIsMenuOpen(false);
@@ -178,15 +181,15 @@ const Navbar: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <Link 
-                    to="/login" 
+                  <Link
+                    to="/login"
                     className="text-neutral-700 hover:text-primary-500 transition-colors py-2"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Login
                   </Link>
-                  <Link 
-                    to="/register" 
+                  <Link
+                    to="/register"
                     className="btn-primary inline-block text-center"
                     onClick={() => setIsMenuOpen(false)}
                   >
