@@ -11,10 +11,8 @@ Projeto desenvolvido como trabalho acadêmico, consiste no frontend de um sistem
 - [Funcionalidades](#funcionalidades)  
 - [Tecnologias](#tecnologias)  
 - [Pré-requisitos](#pré-requisitos)  
-- [Instalação e Execução](#instalação-e-execução)  
-- [Estrutura do Projeto](#estrutura-do-projeto)  
-- [Como Contribuir](#como-contribuir)  
-- [Licença](#licença)
+- [Instalação e Execução](#instalação-e-execução)
+- [Como Contribuir](#como-contribuir)
 
 ---
 
@@ -86,25 +84,6 @@ Antes de começar, verifique se você tem instalado:
    ```
 
 5. Abra `http://localhost:3000` no navegador para acessar o frontend.
-
----
-
-## Estrutura do Projeto
-
-```
-aluguel-carros-frontend/
-├── public/                 
-├── src/
-│   ├── components/         # Componentes reutilizáveis
-│   ├── pages/              # Páginas principais (Home, Login, Reserva, Perfil)
-│   ├── services/           # Configuração de chamadas REST via axios
-│   ├── styles/             # Estilos gerais ou temáticos
-│   ├── App.js              # Componente raiz com rotas definidas
-│   └── index.js            # Entrada da aplicação
-├── .env.example            # Exemplo de variáveis de ambiente
-├── package.json  
-└── README.md
-```
 
 ---
 
